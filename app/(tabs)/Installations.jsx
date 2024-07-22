@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { claimsApi } from '../../src/config/claimsAPI';
-import { List } from 'react-native-paper';
+import { List, Surface, useTheme } from 'react-native-paper';
 
 const Installations = () => {
 
@@ -31,17 +31,21 @@ const Installations = () => {
         console.log('nada')
         const installationsMap = installationsData.map(installation => {
             //console.log(installation)
-            return (<List.Item key={installation.id_installation}
-                title={installation.news}
-                description={installation.observations}
-                left={props => <List.Icon {...props} icon="exclamation" />}
-                right={props => (
-                    <View style={{ justifyContent: 'center' }}>
-                      <Text style={{ color: props.color }}>{installation.status}</Text>
-                    </View>
-                  )}
+            return (
+                <Surface>
+                    <List.Item key={installation.id_installation}
+                        title={installation.news}
+                        description={installation.observations}
+                        left={props => <List.Icon {...props} icon="exclamation" />}
+                        right={props => (
+                            <View style={{ justifyContent: 'center' }}>
+                                <Text style={{ color: props.color }}>{installation.status}</Text>
+                            </View>
+                        )}
 
-            />)
+                    />
+                </Surface>
+            )
         })
         return installationsMap;
 
@@ -50,8 +54,8 @@ const Installations = () => {
     return (
         <SafeAreaProvider>
             <View style={{
-                    marginTop:12,
-                }}>
+                marginTop: 12,
+            }}>
                 <List.Subheader>
                     Instalaciones
                 </List.Subheader>
@@ -78,7 +82,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     title: {
-        fontSize:20,
+        fontSize: 20,
     }
 });
 

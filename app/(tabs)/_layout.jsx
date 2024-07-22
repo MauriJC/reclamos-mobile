@@ -38,12 +38,7 @@ export default function TabLayout() {
                         ),
                     }} />
 
-                <Tabs.Screen name="claims"
-                    options={{
-                        title: 'Usuario',
-                        href: null,
-                    }}
-                     />
+
 
             </Tabs>
         </SafeAreaProvider>
