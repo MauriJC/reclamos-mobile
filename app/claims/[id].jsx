@@ -11,6 +11,7 @@ import UsedMaterialsPicker from '../../components/UsedMaterialsPicker'
 import Observations from '../../components/Observations';
 import Description from '../../components/Description';
 import Details from '../../components/Details';
+import PhotoCapture from '../../components/PhotoCapture';
 
 export default function ClaimDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -139,9 +140,7 @@ export default function ClaimDetailsScreen() {
         />
 
         <Divider></Divider>
-        <Text>
-          Fotografias de la visita
-        </Text>
+        <PhotoCapture></PhotoCapture>
 
       </ScrollView>
     </SafeAreaView>
@@ -156,8 +155,9 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-    width: '100%',
+    width: '90%',
     height: 400,
+    alignSelf:'center',
   },
   fullwidth: {
     display: 'flex',
