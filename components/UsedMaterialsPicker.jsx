@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Alert, ScrollView } from 'react-native';
-import { Button, TextInput, Text, Menu, ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { Button, TextInput, Text, Menu, ActivityIndicator, MD2Colors, DataTable } from 'react-native-paper';
 import { claimsApi } from '../src/config/claimsAPI';
 
-const UsedMaterialsPicker = ({ onAddUsedMaterial }) => {
+const UsedMaterialsPicker = ({ onAddUsedMaterial, usedMaterials, setUsedMaterials }) => {
   const [materials, setMaterials] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
   const [quantity, setQuantity] = useState('');
@@ -28,7 +28,7 @@ const UsedMaterialsPicker = ({ onAddUsedMaterial }) => {
   const addMaterial = () => {
     if (selectedMaterial && quantity) {
       const material = materials.find(mat => mat.id_material === selectedMaterial);
-      onAddUsedMaterial({ ...material, quantity });
+      setUsedMaterials((prevMaterials) => [...prevMaterials, { ...material, quantity }]);
       setSelectedMaterial(null);
       setQuantity('');
     } else {
@@ -37,16 +37,18 @@ const UsedMaterialsPicker = ({ onAddUsedMaterial }) => {
   };
 
   const handleRemoveMaterial = (index) => {
-    setMaterials((prevMaterials) => prevMaterials.filter((_, i) => i !== index));
+    setUsedMaterials((prevMaterials) => prevMaterials.filter((_, i) => i !== index));
   };
 
   if (loading) {
     return <View style={styles.container}><ActivityIndicator animating={true} color={MD2Colors.red800} /></View>;
   }
 
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
+
+
+
       <Text variant='titleMedium'>Materiales adicionales utilizados</Text>
       <Text style={styles.label}>Selecciona un Material</Text>
       <Menu
@@ -79,6 +81,25 @@ const UsedMaterialsPicker = ({ onAddUsedMaterial }) => {
       <Button mode="contained" onPress={addMaterial} style={styles.button}>
         Agregar Material
       </Button>
+      <DataTable>
+        <DataTable.Header>
+          <DataTable.Title>Material</DataTable.Title>
+          <DataTable.Title numeric>Cantidad</DataTable.Title>
+          <DataTable.Title numeric>Acciones</DataTable.Title>
+        </DataTable.Header>
+
+        {usedMaterials.map((material, index) => (
+          <DataTable.Row key={index}>
+            <DataTable.Cell>{material.name}</DataTable.Cell>
+            <DataTable.Cell numeric>{material.quantity}</DataTable.Cell>
+            <DataTable.Cell numeric>
+              <Button onPress={() => handleRemoveMaterial(index)} mode="text">
+                Eliminar
+              </Button>
+            </DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable>
     </ScrollView>
   );
 };

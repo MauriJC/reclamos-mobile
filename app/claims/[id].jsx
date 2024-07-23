@@ -1,8 +1,8 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import { claimsApi } from '../../src/config/claimsAPI';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, MD2Colors, Text, Divider } from 'react-native-paper';
+import { useEffect, useState, useRef } from 'react';
+import { ActivityIndicator, MD2Colors, Text, Divider,Button} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
 //Components imports
@@ -17,6 +17,7 @@ export default function ClaimDetailsScreen() {
   const [claimData, setClaimData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [usedMaterials, setUsedMaterials] = useState([]);
+  const mapRef = useRef(null); // Referencia del mapa
 
 
   useEffect(() => {
@@ -62,6 +63,18 @@ export default function ClaimDetailsScreen() {
 
   const serviceLocation = claimData?.Service?.Location
 
+  const centerMap = () => {
+    if (mapRef.current && serviceLocation) {
+      mapRef.current.animateToRegion({
+        latitude: serviceLocation.latitude,
+        longitude: serviceLocation.longitude,
+        latitudeDelta:  0.01, 
+        longitudeDelta:  0.01, 
+      });
+    }
+  };
+
+
 
 
   return (
@@ -75,24 +88,30 @@ export default function ClaimDetailsScreen() {
         <Divider />
         <View>
           {serviceLocation?.latitude && serviceLocation?.longitude ? (
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                latitude: serviceLocation.latitude,
-                longitude: serviceLocation.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-            >
-              <Marker
-                coordinate={{
+            <>
+              <MapView
+                ref={mapRef}
+                style={styles.map}
+                initialRegion={{
                   latitude: serviceLocation.latitude,
                   longitude: serviceLocation.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
                 }}
-                title={"Lugar del reclamo"}
-                description={"Localizacion"}
-              />
-            </MapView>
+              >
+                <Marker
+                  coordinate={{
+                    latitude: serviceLocation.latitude,
+                    longitude: serviceLocation.longitude,
+                  }}
+                  title={"Lugar del reclamo"}
+                  description={"Localizacion"}
+                />
+              </MapView>
+              <Button onPress={centerMap} mode="contained" style={styles.centerButton}>
+                Centrar mapa
+              </Button>
+            </>
           ) : (
             <Text>    Ubicacion GPS no disponible</Text>
           )}
@@ -101,7 +120,7 @@ export default function ClaimDetailsScreen() {
 
         <Divider />
 
-        <Description/>
+        <Description description={claimData.observations} />
 
         <Divider></Divider>
 
@@ -111,22 +130,17 @@ export default function ClaimDetailsScreen() {
 
         <Divider />
 
-        <Observations></Observations>    
+        <Observations></Observations>
 
-        <UsedMaterialsPicker onAddUsedMaterial={handleAddUsedMaterial} />
-
-        <View style={styles.listContainer}>
-          {usedMaterials.map((material, index) => (
-            <View key={index} style={styles.materialItem}>
-              <Text>{material.name}</Text>
-              <Text>Cantidad: {material.quantity}</Text>
-            </View>
-          ))}
-        </View>
+        <UsedMaterialsPicker
+          onAddUsedMaterial={handleAddUsedMaterial}
+          usedMaterials={usedMaterials}
+          setUsedMaterials={setUsedMaterials}
+        />
 
         <Divider></Divider>
         <Text>
-          Fotografias de la instalacion
+          Fotografias de la visita
         </Text>
 
       </ScrollView>
