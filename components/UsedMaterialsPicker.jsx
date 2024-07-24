@@ -12,6 +12,7 @@ const UsedMaterialsPicker = ({ onAddUsedMaterial, usedMaterials, setUsedMaterial
 
   useEffect(() => {
     fetchMaterials();
+    
   }, []);
 
   const fetchMaterials = async () => {

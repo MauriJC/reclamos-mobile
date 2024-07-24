@@ -1,25 +1,28 @@
-import { useLocalSearchParams } from 'expo-router';
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { Link, useLocalSearchParams } from 'expo-router';
+import { StyleSheet, ScrollView, View, Alert } from 'react-native';
 import { claimsApi } from '../../src/config/claimsAPI';
 import { useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, MD2Colors, Text, Divider,Button} from 'react-native-paper';
+import { ActivityIndicator, MD2Colors, Text, Divider, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MapView, { Marker } from 'react-native-maps';
 //Components imports
 import AssignedMaterials from '../../components/AssignedMaterials';
-import UsedMaterialsPicker from '../../components/UsedMaterialsPicker'
+import UsedMaterialsPicker from '../../components/UsedMaterialsPicker';
 import Observations from '../../components/Observations';
 import Description from '../../components/Description';
 import Details from '../../components/Details';
 import PhotoCapture from '../../components/PhotoCapture';
+import axios from 'axios';
 
 export default function ClaimDetailsScreen() {
   const { id } = useLocalSearchParams();
   const [claimData, setClaimData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [usedMaterials, setUsedMaterials] = useState([]);
+  const [observations, setObservations] = useState('');
+  const [photos, setPhotos] = useState([]);
+  const [location, setLocation] = useState(null);
   const mapRef = useRef(null); // Referencia del mapa
-
 
   useEffect(() => {
     getClaim();
@@ -44,7 +47,7 @@ export default function ClaimDetailsScreen() {
   const submitUsedMaterials = async () => {
     try {
       const response = await axios.post('', {
-        usedMaterials: usedMaterials.map(({ id, quantity }) => ({ id, quantity }))
+        usedMaterials: usedMaterials.map(({ id, quantity }) => ({ id, quantity })),
       });
       Alert.alert('Éxito', 'Materiales usados enviados correctamente.');
       setUsedMaterials([]);
@@ -54,6 +57,16 @@ export default function ClaimDetailsScreen() {
     }
   };
 
+  const closeClaim = async() =>{
+    try{
+      console.log('close claim')
+    }
+    catch{
+      console.log('aa')
+    }
+  };
+
+
   if (loading) {
     return <View style={styles.container}><ActivityIndicator animating={true} color={MD2Colors.red800} /></View>;
   }
@@ -62,21 +75,22 @@ export default function ClaimDetailsScreen() {
     return <Text>No data available</Text>;
   }
 
-  const serviceLocation = claimData?.Service?.Location
+  const serviceLocation = claimData?.Service?.Location;
 
   const centerMap = () => {
     if (mapRef.current && serviceLocation) {
       mapRef.current.animateToRegion({
         latitude: serviceLocation.latitude,
         longitude: serviceLocation.longitude,
-        latitudeDelta:  0.01, 
-        longitudeDelta:  0.01, 
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
       });
     }
   };
 
-
-
+  const handleRemovePhoto = (index) => {
+    setPhotos((prevPhotos) => prevPhotos.filter((_, i) => i !== index));
+  };
 
   return (
     <SafeAreaView>
@@ -85,7 +99,7 @@ export default function ClaimDetailsScreen() {
           <Text variant='titleLarge'>Detalles del reclamo {id}</Text>
         </View>
 
-        <Details data={claimData}></Details>
+        <Details data={claimData} />
         <Divider />
         <View>
           {serviceLocation?.latitude && serviceLocation?.longitude ? (
@@ -114,24 +128,23 @@ export default function ClaimDetailsScreen() {
               </Button>
             </>
           ) : (
-            <Text>    Ubicacion GPS no disponible</Text>
+            <Text>Ubicacion GPS no disponible</Text>
           )}
-
         </View>
 
         <Divider />
 
         <Description description={claimData.observations} />
 
-        <Divider></Divider>
+        <Divider />
 
         <View>
-          <AssignedMaterials service_type={claimData.Service.Service_type.description} ></AssignedMaterials>
+          <AssignedMaterials service_type={claimData.Service.Service_type.description} />
         </View>
 
         <Divider />
 
-        <Observations></Observations>
+        <Observations text={observations} setText={setObservations} />
 
         <UsedMaterialsPicker
           onAddUsedMaterial={handleAddUsedMaterial}
@@ -139,8 +152,25 @@ export default function ClaimDetailsScreen() {
           setUsedMaterials={setUsedMaterials}
         />
 
-        <Divider></Divider>
-        <PhotoCapture></PhotoCapture>
+        <Divider />
+        <PhotoCapture
+          photos={photos}
+          setPhotos={setPhotos}
+          handleRemovePhoto={handleRemovePhoto}
+          location={location}
+          setLocation={setLocation}
+        />
+
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 }}>
+          <Button mode='contained' onPress={closeClaim}>
+            Cerrar reclamo
+          </Button>
+          <Link href={'/'}>
+            <Button mode='contained'>
+              Cancelar
+            </Button>
+          </Link>
+        </View>
 
       </ScrollView>
     </SafeAreaView>
@@ -151,17 +181,17 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   map: {
     flex: 1,
     width: '90%',
     height: 400,
-    alignSelf:'center',
+    alignSelf: 'center',
   },
   fullwidth: {
     display: 'flex',
-    flex: 1
+    flex: 1,
   },
   listContainer: {
     width: '100%',
@@ -181,5 +211,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
-

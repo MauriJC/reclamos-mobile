@@ -4,11 +4,7 @@ import { StyleSheet, ScrollView, View } from 'react-native';
 
 const Description = ({ description }) => {
     //console.log(data.Service.Client);
-
-
     return (
-
-
         <View style={styles.container}>
             <Card>
                 <Card.Content>

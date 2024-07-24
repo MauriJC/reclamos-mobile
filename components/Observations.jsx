@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, TextInput } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 
-const Observations = () => {
-  const [text, setText] = useState('');
-  const [error, setError] = useState('');
+const Observations = ({ text, setText }) => {
+  const [error, setError] = React.useState('');
 
   const handleChangeText = (text) => {
     setText(text);

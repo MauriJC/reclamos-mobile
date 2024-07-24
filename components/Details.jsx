@@ -1,9 +1,9 @@
 import React from 'react'
-import { Text, DataTable } from 'react-native-paper';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import {  DataTable } from 'react-native-paper';
+import { View, ScrollView } from 'react-native';
 
 const Details = ({ data }) => {
-    //console.log(data.Service.Client);
+    console.log('details client',data.Service.Client);
     return (
 
         <ScrollView>
@@ -16,11 +16,11 @@ const Details = ({ data }) => {
 
                     <DataTable.Row>
                         <DataTable.Cell>Nombre</DataTable.Cell>
-                        <DataTable.Cell>{data.Service.Client.name}</DataTable.Cell>
+                        <DataTable.Cell>{data.Service.Client?.name}</DataTable.Cell>
                     </DataTable.Row>
                     <DataTable.Row>
                         <DataTable.Cell>Apellido</DataTable.Cell>
-                        <DataTable.Cell>{data.Service.Client.last_name}</DataTable.Cell>
+                        <DataTable.Cell>{data.Service.Client?.last_name}</DataTable.Cell>
                     </DataTable.Row>
                     <DataTable.Row>
                         <DataTable.Cell>Nro. de Linea</DataTable.Cell>
