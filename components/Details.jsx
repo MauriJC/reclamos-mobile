@@ -3,7 +3,7 @@ import {  DataTable } from 'react-native-paper';
 import { View, ScrollView } from 'react-native';
 
 const Details = ({ data }) => {
-    console.log('details client',data.Service.Client);
+    //console.log('details client',data.Service.Client);
     return (
 
         <ScrollView>

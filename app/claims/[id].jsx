@@ -1,4 +1,4 @@
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, ScrollView, View, Alert } from 'react-native';
 import { claimsApi } from '../../src/config/claimsAPI';
 import { useEffect, useState, useRef } from 'react';
@@ -12,7 +12,7 @@ import Observations from '../../components/Observations';
 import Description from '../../components/Description';
 import Details from '../../components/Details';
 import PhotoCapture from '../../components/PhotoCapture';
-import axios from 'axios';
+
 
 export default function ClaimDetailsScreen() {
   const { id } = useLocalSearchParams();
@@ -23,6 +23,7 @@ export default function ClaimDetailsScreen() {
   const [photos, setPhotos] = useState([]);
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null); // Referencia del mapa
+  const router = useRouter()
 
   useEffect(() => {
     getClaim();
@@ -43,29 +44,47 @@ export default function ClaimDetailsScreen() {
     setUsedMaterials([...usedMaterials, material]);
   };
 
-  //Nota: CORREGIR EL ENDPOINT PARA CERRAR EL RECLAMO
-  const submitUsedMaterials = async () => {
+  const closeClaim = async () => {
     try {
-      const response = await axios.post('', {
-        usedMaterials: usedMaterials.map(({ id, quantity }) => ({ id, quantity })),
-      });
-      Alert.alert('Éxito', 'Materiales usados enviados correctamente.');
-      setUsedMaterials([]);
+      const photoData = photos.map(photo => ({
+        base64: photo.base64,
+        latitude: photo.location.coords.latitude,
+        longitude: photo.location.coords.longitude
+      }));
+  
+      const usedMaterialsData = usedMaterials.map(({ id_material, quantity }) => ({ id_material, quantity }));
+  
+      const payload = {
+        observations,
+        id_claim: claimData.id_claim,
+        id_service: claimData.Service.id_service,
+        id_mobile: claimData.id_mobile,
+        id_client: claimData.Service.id_client,
+        photos: photoData,
+        usedMaterialsData,
+        // Add latitude and longitude to payload regardless
+        latitude: photoData[0].latitude,
+        longitude: photoData[0].longitude
+      };
+  
+  
+      console.log(payload);
+  
+      // Envía la solicitud POST al backend
+      const response = await claimsApi.post('/claims/close', payload);
+  
+      if (response.status === 200) {
+        Alert.alert('Éxito', 'Detalles del reclamo enviados correctamente.');
+        // Redirige al usuario a la página principal o a donde sea necesario
+        router.replace('/'); // Reemplaza 'Home' con el nombre correcto de tu ruta
+      } else {
+        Alert.alert('Error', 'No se pudieron enviar los detalles del reclamo.');
+      }
     } catch (error) {
-      console.error('Error submitting used materials:', error);
-      Alert.alert('Error', 'No se pudieron enviar los materiales usados.');
+      console.error('Error submitting claim details:', error);
+      Alert.alert('Error', 'No se pudieron enviar los detalles del reclamo.');
     }
   };
-
-  const closeClaim = async() =>{
-    try{
-      console.log('close claim')
-    }
-    catch{
-      console.log('aa')
-    }
-  };
-
 
   if (loading) {
     return <View style={styles.container}><ActivityIndicator animating={true} color={MD2Colors.red800} /></View>;
@@ -128,7 +147,7 @@ export default function ClaimDetailsScreen() {
               </Button>
             </>
           ) : (
-            <Text>Ubicacion GPS no disponible</Text>
+            <Text variant='titleMedium' style={{ textAlign: 'center' }}>Ubicacion GPS no disponible</Text>
           )}
         </View>
 

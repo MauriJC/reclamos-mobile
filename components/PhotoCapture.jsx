@@ -48,9 +48,9 @@ const PhotoCapture = ({ photos, setPhotos, handleRemovePhoto, location, setLocat
 
   const takePhoto = async () => {
     if (cameraRef && photos.length < 3) {
-      const photo = await cameraRef.takePictureAsync();
+      const photo = await cameraRef.takePictureAsync({base64:true});
       const location = await Location.getCurrentPositionAsync({});
-      setPhotos([...photos, { uri: photo.uri, location }]);
+      setPhotos([...photos, { uri: photo.uri, location, base64:photo.base64 }]);
       setLocation(location); // Set the location in ClaimDetailsScreen
     } else {
       Alert.alert('Limit Reached', 'You can only take 3 photos.');
