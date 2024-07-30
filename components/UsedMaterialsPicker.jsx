@@ -12,7 +12,7 @@ const UsedMaterialsPicker = ({ onAddUsedMaterial, usedMaterials, setUsedMaterial
 
   useEffect(() => {
     fetchMaterials();
-    
+
   }, []);
 
   const fetchMaterials = async () => {
@@ -29,7 +29,7 @@ const UsedMaterialsPicker = ({ onAddUsedMaterial, usedMaterials, setUsedMaterial
   const addMaterial = () => {
     if (selectedMaterial && quantity) {
       const material = materials.find(mat => mat.id_material === selectedMaterial);
-      setUsedMaterials((prevMaterials) => [...prevMaterials, { ...material, quantity }]);
+      setUsedMaterials((prevMaterials) => [...prevMaterials, { ...material, quantity, price }]);
       setSelectedMaterial(null);
       setQuantity('');
     } else {

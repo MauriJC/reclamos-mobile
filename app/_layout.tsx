@@ -18,8 +18,7 @@ export default function Layout() {
             <PaperProvider theme={theme} >
                 <Stack initialRouteName="(tabs)" screenOptions={{
                     headerShown: false,
-
-                }} >
+                }}>
                     <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                     <Stack.Screen name="+not-found" />
                 </Stack>

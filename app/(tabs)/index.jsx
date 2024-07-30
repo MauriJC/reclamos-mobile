@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { List, Surface, useTheme } from 'react-native-paper';
 import { Link } from 'expo-router';
 import { claimsApi } from '../../src/config/claimsAPI'
@@ -60,11 +60,10 @@ const Claims = () => {
         <SafeAreaProvider >
             <View style={{
                 marginTop: 12,
-
             }}>
-                <Surface elevation={5}>
-                    <List.Subheader>Reclamos asignados</List.Subheader>
-                </Surface>
+
+                <List.Subheader>Reclamos asignados</List.Subheader>
+
 
                 {renderClaims()}
             </View>

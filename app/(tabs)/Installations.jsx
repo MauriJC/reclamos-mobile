@@ -3,17 +3,9 @@ import { View, Text, StyleSheet } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { claimsApi } from '../../src/config/claimsAPI';
 import { List, Surface, useTheme } from 'react-native-paper';
+import { Link } from 'expo-router';
 
 const Installations = () => {
-
-
-    const [expanded, setExpanded] = React.useState(true);
-
-    const handlePress = () => setExpanded(!expanded);
-
-
-
-
     const [installationsData, setInstallationsData] = useState([]);
 
     useEffect(() => {
@@ -21,34 +13,34 @@ const Installations = () => {
     }, [])
 
     const getInstallations = async () => {
-        const response = await claimsApi.get(`/installations`)
-        console.log(response.data)
+        const response = await claimsApi.get(`/installations/new`)
+        //console.log(response.data)
         setInstallationsData(response.data)
     }
 
 
     const renderInstallations = () => {
-        console.log('nada')
         const installationsMap = installationsData.map(installation => {
             //console.log(installation)
             return (
-                <Surface>
-                    <List.Item key={installation.id_installation}
+                <Surface key={installation.id_installation}>
+                    <List.Item
                         title={installation.news}
                         description={installation.observations}
                         left={props => <List.Icon {...props} icon="exclamation" />}
                         right={props => (
                             <View style={{ justifyContent: 'center' }}>
                                 <Text style={{ color: props.color }}>{installation.status}</Text>
+                                <Link href={`installation/${installation.id_installation}`}>
+                                    <List.Icon {...props} icon="arrow-right-circle" />
+                                </Link>
                             </View>
                         )}
-
                     />
                 </Surface>
             )
         })
         return installationsMap;
-
     }
 
     return (
@@ -57,10 +49,14 @@ const Installations = () => {
                 marginTop: 12,
             }}>
                 <List.Subheader>
-                    Instalaciones
+                    Instalaciones asignadas
+                </List.Subheader>
+                {installationsData ? renderInstallations() : 'Loading...'}
+
+                <List.Subheader>
+                    Otras instalaciones
                 </List.Subheader>
 
-                {installationsData ? renderInstallations() : 'Loading...'}
             </View>
         </SafeAreaProvider>
     )

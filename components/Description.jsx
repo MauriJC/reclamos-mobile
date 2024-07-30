@@ -2,14 +2,25 @@ import React from 'react'
 import { Avatar, Button, Card, Text } from 'react-native-paper';
 import { StyleSheet, ScrollView, View } from 'react-native';
 
-const Description = ({ description }) => {
+const Description = ({ description, installation, news }) => {
     //console.log(data.Service.Client);
+
     return (
         <View style={styles.container}>
             <Card>
                 <Card.Content>
-                    <Text variant="titleLarge">Descripcion del reclamo</Text>
-                    <Text variant="bodyMedium"> {description}</Text>
+                    {installation ?
+                        <>
+                            <Text variant="titleLarge">Descripcion de la instalacion</Text>
+                            <Text variant='bodyMedium'>{news}</Text>
+                        </>
+                        :
+                        <>
+                            <Text variant="titleLarge">Descripcion del reclamo</Text>
+                            <Text variant="bodyMedium"> {description}</Text>
+                        </>
+                    }
+
                 </Card.Content>
             </Card>
         </View>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TextInput } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 
-const Observations = ({ text, setText }) => {
+const Observations = ({ text, setText, installation }) => {
   const [error, setError] = React.useState('');
 
   const handleChangeText = (text) => {
@@ -16,9 +16,16 @@ const Observations = ({ text, setText }) => {
 
   return (
     <View style={styles.container}>
-      <Text variant='titleMedium'>
-        Observaciones del reclamo
-      </Text>
+      {installation ?
+        <Text variant='titleMedium'>
+          Observaciones de la instalacion
+        </Text> :
+        <Text variant='titleMedium'>
+          Observaciones del reclamo
+        </Text>
+
+      }
+
       <TextInput
         placeholder="Ingresar observaciones"
         value={text}

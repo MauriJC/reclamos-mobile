@@ -3,7 +3,7 @@ import axios from "axios";
 
 
 
-const urlApi = 'http://192.168.101.7:3001';
+const urlApi = 'http://192.168.101.2:3001';
 
 export const claimsApi = axios.create({
     baseURL: urlApi,
